@@ -15,17 +15,17 @@ public class MqttSubSample {
 
     public static void main(String[] args) {
 
-        String topic        = "MQTT Examples";
-        //String content      = "Message from MqttPublishSample" + new Date().toString();
+        String topic        = "/MQTT_Examples";
         int qos             = 2;
-        String broker       = "tcp://localhost:1883";
-        String clientId     = "JavaSubClient";
+        //String broker       = "tcp://10.19.248.45:1883"; //"tcp://10.19.139.125:1883"; //"tcp://localhost:1883";
+        String broker       = "tcp://10.37.151.22:1883";
+        String clientId     = "JavaSubClient" + args[0];
         MemoryPersistence persistence = new MemoryPersistence();
 
         try {
             MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
-//            connOpts.setUserName(userName);
+//            connOpts.setUserName(userName); 
 //            connOpts.setPassword(password);
             connOpts.setCleanSession(true);
             System.out.println("Connecting to broker: "+broker);
@@ -47,7 +47,7 @@ public class MqttSubSample {
             
             sampleClient.disconnect();
             System.out.println("Disconnected");
-            //System.exit(0);
+            System.exit(0);
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());
             System.out.println("msg "+me.getMessage());
