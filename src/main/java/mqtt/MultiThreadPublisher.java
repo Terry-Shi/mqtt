@@ -20,8 +20,8 @@ public class MultiThreadPublisher {
 		}
 		
 		String broker = "tcp://10.37.151.21:1883";
-		int clientsCount = 5;
-		int requestsCount = 200;
+		int clientsCount = 110;
+		int requestsCount = 50;
 		String topic = "topic";
 		
 		switch(args.length) { 
@@ -41,7 +41,7 @@ public class MultiThreadPublisher {
         ExecutorService executor = Executors.newFixedThreadPool(clientsCount);
         for (int i = 0; i < clientsCount; i++) {
         	MqttPublishSample worker = new MqttPublishSample();
-        	worker.setClientId("clientId_" + clientsCount);
+        	worker.setClientId("clientId_" + i);
         	worker.setQos(1);
         	worker.setRequestsCount(requestsCount);
         	worker.setBroker(broker);
@@ -57,6 +57,7 @@ public class MultiThreadPublisher {
 			}
         }
         System.out.println("Finished all threads");
+        System.exit(0);
     }
 	
 }

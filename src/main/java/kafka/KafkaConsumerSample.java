@@ -25,7 +25,7 @@ public class KafkaConsumerSample {
 		props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-		consumer.subscribe(Arrays.asList("test1", "test2"));
+		consumer.subscribe(Arrays.asList("message_public", "test2"));
 		final int minBatchSize = 10;
 		try {
 			while (true) {

@@ -11,7 +11,7 @@ public class MqttPublishSample implements Runnable{
 	public String topic        = "/MQTT_Examples";
 	public int qos             = 2;
     //public String broker       = "tcp://localhost";//"tcp://10.19.130.5:1883"; //"tcp://10.19.139.125:1883"; //"tcp://10.19.138.145:1883";
-	public String broker       = "tcp://10.37.151.21:1883";
+	public String broker       = "tcp://10.37.151.24:1883";
 	public String clientId     = "clientId_MqttPublishSample"; // clientId 不可重复，否则会造成其他使用相同clientId的客户端断线。
     public int requestsCount = 1000;
 	
@@ -65,36 +65,44 @@ public class MqttPublishSample implements Runnable{
 	@Override
 	public void run() {
 		MemoryPersistence persistence = new MemoryPersistence();
+		MqttClient sampleClient = null;
         try {
-            MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
+            sampleClient = new MqttClient(broker, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
+            // inflight 这个是客户端飞行窗口的概念，如果你设置了飞行窗口是10，那么如果你发布了10条消息的qos都是>0的，而还没有收到服务器回复的publish的ack,这里的飞行窗口就会存满
+            connOpts.setMaxInflight(1000);// related to error code REASON_CODE_MAX_INFLIGHT=32202
 //            connOpts.setUserName("client03");
 //            connOpts.setPassword("psw03".toCharArray()); 
             connOpts.setCleanSession(true);
             sampleClient.connect(connOpts);
-            System.out.println("Connected to broker: "+broker);
+            System.out.println("Connected to broker: "+ broker + " for " + this.clientId);
             
             for (int i=0; i<requestsCount; i++) {
-            	String content = "Message from MqttPublishSample " + this.clientId + "-" + i;
+            	String content = "Message from " + this.clientId + "-" + i;
 	            MqttMessage message = new MqttMessage(content.getBytes());
 	            message.setQos(qos);
 	            message.setRetained(true);
 	            sampleClient.publish(topic, message);
-	            System.out.println("Message published");
-	            Thread.sleep(100);
+	            System.out.println("Message "+i+" published from client " + this.clientId);
+	            //Thread.sleep(10);
             }
-            sampleClient.disconnect();
-            System.out.println("Disconnected");
-            System.exit(0);
         } catch(MqttException me) {
+        	//System.err.println("clientId "+ clientId);
             System.out.println("reason "+me.getReasonCode());
-            System.out.println("msg "+me.getMessage());
-            System.out.println("loc "+me.getLocalizedMessage());
-            System.out.println("cause "+me.getCause());
-            System.out.println("excep "+me);
-            me.printStackTrace();
-        } catch (InterruptedException e) {
-			e.printStackTrace();
+            System.out.println("msg "+me.getMessage() + " for client " + this.clientId);
+            //System.out.println("loc "+me.getLocalizedMessage());
+            //System.out.println("cause "+me.getCause());
+            //System.out.println("excep "+me);
+            //me.printStackTrace();
+//        } catch (InterruptedException e) {
+//			e.printStackTrace();
+		} finally {
+			try {
+				sampleClient.disconnect();
+				System.out.println("Disconnected for " + this.clientId);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 	}
     

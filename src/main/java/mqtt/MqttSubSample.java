@@ -21,9 +21,9 @@ public class MqttSubSample {
         String broker       = "tcp://10.37.151.22:1883";
         String clientId     = "JavaSubClient" + args[0];
         MemoryPersistence persistence = new MemoryPersistence();
-
+        MqttClient sampleClient = null;
         try {
-            MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
+            sampleClient = new MqttClient(broker, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
 //            connOpts.setUserName(userName); 
 //            connOpts.setPassword(password);
@@ -47,7 +47,6 @@ public class MqttSubSample {
             
             sampleClient.disconnect();
             System.out.println("Disconnected");
-            System.exit(0);
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());
             System.out.println("msg "+me.getMessage());
@@ -55,6 +54,12 @@ public class MqttSubSample {
             System.out.println("cause "+me.getCause());
             System.out.println("excep "+me);
             me.printStackTrace();
+        } finally {
+        	try {
+        		sampleClient.disconnect();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
         }
     }
 }
