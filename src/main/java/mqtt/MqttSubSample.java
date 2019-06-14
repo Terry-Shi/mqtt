@@ -44,9 +44,6 @@ public class MqttSubSample {
     		} catch (Exception e) {
     			//If we can't read we'll just exit
     		}
-            
-            sampleClient.disconnect();
-            System.out.println("Disconnected");
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());
             System.out.println("msg "+me.getMessage());
@@ -57,6 +54,7 @@ public class MqttSubSample {
         } finally {
         	try {
         		sampleClient.disconnect();
+        		 System.out.println("Disconnected");
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
