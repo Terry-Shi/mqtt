@@ -26,6 +26,7 @@ public class KafkaConsumerSample {
 		props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 		consumer.subscribe(Arrays.asList("message_public", "test2"));
+		
 		final int minBatchSize = 10;
 		try {
 			while (true) {
@@ -62,7 +63,7 @@ public class KafkaConsumerSample {
 			while (running) {
 				ConsumerRecords<String, String> records = consumer.poll(1000);
 				for (ConsumerRecord<String, String> record : records)
-					System.out.println(record.offset() + ": " + record.value());
+					System.out.println(record.offset() + ": " + record.value() + " offset=" + record.offset());
 			}
 		} finally {
 			consumer.close();
